@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitRetain - Turn January Joiners Into Forever Members</title>
+    <meta name="description" content="AI that predicts and prevents gym member churn before it happens. 83% retention improvement guaranteed. See churn 14 days in advance and re-engage automatically.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black:wght@400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        :root {
+            --energy-orange: #ff6b35;
+            --deep-charcoal: #2c2c2c;
+            --steel-blue: #4a90a4;
+            --fresh-white: #fdfeff;
+            --success-green: #27ae60;
+            --alert-yellow: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: linear-gradient(135deg, var(--deep-charcoal) 0%, #1a1a1a 100%);
+            color: var(--fresh-white);
+            overflow-x: hidden;
+        }
+
+        .archivo-black {
+            font-family: 'Archivo Black', sans-serif;
+        }
+
+        .jetbrains-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Custom color classes */
+        .text-energy-orange { color: var(--energy-orange); }
+        .text-steel-blue { color: var(--steel-blue); }
+        .text-success-green { color: var(--success-green); }
+        .text-alert-yellow { color: var(--alert-yellow); }
+        .bg-energy-orange { background-color: var(--energy-orange); }
+        .bg-steel-blue { background-color: var(--steel-blue); }
+        .bg-deep-charcoal { background-color: var(--deep-charcoal); }
+        .border-energy-orange { border-color: var(--energy-orange); }
+        .border-steel-blue { border-color: var(--steel-blue); }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-dark {
+            background: rgba(44, 44, 44, 0.4);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--energy-orange) 0%, var(--steel-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 3D Canvas */
+        #three-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animation classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .fade-in-delay-1 { animation-delay: 0.2s; }
+        .fade-in-delay-2 { animation-delay: 0.4s; }
+        .fade-in-delay-3 { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Pulse animation for metrics */
+        .pulse-metric {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 107, 53, 0.6);
+            }
+        }
+
+        /* ROI Calculator */
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: var(--steel-blue);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--energy-orange);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--energy-orange);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Hover effects */
+        .hover-lift {
+            transition: transform 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+        }
+
+        /* FAQ accordion */
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-content.open {
+            max-height: 200px;
+        }
+
+        /* Navigation */
+        nav {
+            backdrop-filter: blur(20px);
+            background: rgba(44, 44, 44, 0.8);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--deep-charcoal);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--energy-orange);
+            border-radius: 4px;
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            position: relative;
+            background: rgba(74, 144, 164, 0.3);
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--energy-orange) 0%, var(--steel-blue) 100%);
+            border-radius: 10px;
+            transition: width 2s ease-in-out;
+        }
+
+        /* Testimonial cards */
+        .testimonial-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(74, 144, 164, 0.1) 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-energy-orange rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">F</span>
+                </div>
+                <span class="archivo-black text-xl text-white">FitRetain</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#features" class="text-white hover:text-energy-orange transition-colors">Features</a>
+                <a href="#pricing" class="text-white hover:text-energy-orange transition-colors">Pricing</a>
+                <a href="#testimonials" class="text-white hover:text-energy-orange transition-colors">Success Stories</a>
+                <button class="bg-energy-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
+                    Start Free Trial
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <canvas id="three-canvas"></canvas>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <div class="fade-in">
+                <h1 class="archivo-black text-5xl md:text-7xl lg:text-8xl mb-6">
+                    Turn <span class="gradient-text">January Joiners</span><br>
+                    Into <span class="text-energy-orange">Forever Members</span>
+                </h1>
+            </div>
+            
+            <div class="fade-in fade-in-delay-1">
+                <p class="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">
+                    AI that predicts and prevents gym member churn before it happens. 
+                    See churn <span class="text-energy-orange font-semibold">14 days in advance</span> 
+                    and re-engage automatically with <span class="text-success-green font-semibold">83% success rate</span>.
+                </p>
+            </div>
+
+            <div class="fade-in fade-in-delay-2 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button class="bg-energy-orange text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-opacity-90 transform hover:scale-105 transition-all">
+                    Start 30-Day Free Trial
+                </button>
+                <button class="border border-steel-blue text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-steel-blue hover:bg-opacity-20 transition-all">
+                    Watch Demo (2 min)
+                </button>
+            </div>
+
+            <div class="fade-in fade-in-delay-3 mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="glass-dark rounded-xl p-6 pulse-metric">
+                    <div class="jetbrains-mono text-3xl font-bold text-energy-orange mb-2">83%</div>
+                    <div class="text-sm text-gray-300">Retention Rate Improvement</div>
+                </div>
+                <div class="glass-dark rounded-xl p-6">
+                    <div class="jetbrains-mono text-3xl font-bold text-success-green mb-2">$47K</div>
+                    <div class="text-sm text-gray-300">Avg Annual Revenue Recovery</div>
+                </div>
+                <div class="glass-dark rounded-xl p-6">
+                    <div class="jetbrains-mono text-3xl font-bold text-steel-blue mb-2">14</div>
+                    <div class="text-sm text-gray-300">Days Churn Prediction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Points Section -->
+    <section id="problems" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="archivo-black text-4xl md:text-5xl mb-6">
+                    Why Do <span class="text-energy-orange">Good Members</span> Disappear?
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    You're losing $127K annually to preventable churn. Here's what's happening behind the scenes.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-dark rounded-2xl p-8 hover-lift">
+                    <div class="w-16 h-16 bg-alert-yellow rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-energy-orange">Silent Churn Warning Signs</h3>
+                    <p class="text-gray-300 mb-4">
+                        Members are checking out mentally 2-3 weeks before they cancel. You only notice when they stop coming entirely.
+                    </p>
+                    <div class="text-sm text-gray-400">
+                        • Attendance drops 40% (you miss it)<br>
+                        • Class bookings stop<br>
+                        • App engagement flatlines
+                    </div>
+                </div>
+
+                <div class="glass-dark rounded-2xl p-8 hover-lift">
+                    <div class="w-16 h-16 bg-alert-yellow rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-energy-orange">Reactive Outreach</h3>
+                    <p class="text-gray-300 mb-4">
+                        Your "win-back" emails reach people who decided to quit weeks ago. You're texting ghosts.
+                    </p>
+                    <div class="text-sm text-gray-400">
+                        • Generic "we miss you" campaigns<br>
+                        • No personalization or timing<br>
+                        • 4% response rate (industry avg)
+                    </div>
+                </div>
+
+                <div class="glass-dark rounded-2xl p-8 hover-lift">
+                    <div class="w-16 h-16 bg-alert-yellow rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-energy-orange">Revenue Bleeding</h3>
+                    <p class="text-gray-300 mb-4">
+                        Each lost member costs you $2,400/year in lifetime value. Multiply by your 30% annual churn rate.
+                    </p>
+                    <div class="text-sm text-gray-400">
+                        • Average LTV: $2,400 per member<br>
+                        • Typical churn: 30-40% annually<br>
+                        • Prevention cost: 10x cheaper than acquisition
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="features" class="py-20 bg-gradient-to-b from-transparent to-gray-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="archivo-black text-4xl md:text-5xl mb-6">
+                    How <span class="gradient-text">FitRetain</span> Prevents Churn
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    AI-powered retention that works with your existing systems. No staff training required.
+                </p>
+            </div>
+
+            <div class="space-y-20">
+                <!-- Step 1 -->
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="inline-flex items-center bg-energy-orange text-white px-4 py-2 rounded-full mb-6">
+                            <span class="jetbrains-mono font-bold">01</span>
+                            <span class="ml-2">PREDICT</span>
+                        </div>
+                        <h3 class="archivo-black text-3xl mb-6">
+                            AI Detects Risk <span class="text-energy-orange">14 Days Early</span>
+                        </h3>
+                        <p class="text-gray-300 mb-6">
+                            Advanced machine learning analyzes check-in patterns, class attendance, app usage, and payment history. 
+                            The moment engagement drops below personalized thresholds, you get an alert.
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">Real-time engagement scoring</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">Behavioral pattern recognition</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">95% churn prediction accuracy</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl p-8">
+                        <h4 class="text-xl font-bold mb-4">Member Risk Dashboard</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-red-500 bg-opacity-20 rounded-lg">
+                                <span>Sarah Chen</span>
+                                <span class="text-red-400 jetbrains-mono">87% RISK</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-yellow-500 bg-opacity-20 rounded-lg">
+                                <span>Mike Johnson</span>
+                                <span class="text-yellow-400 jetbrains-mono">64% RISK</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-500 bg-opacity-20 rounded-lg">
+                                <span>Emma Wilson</span>
+                                <span class="text-green-400 jetbrains-mono">12% RISK</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 md:order-1">
+                        <div class="glass rounded-2xl p-8">
+                            <h4 class="text-xl font-bold mb-4">Auto-Generated Outreach</h4>
+                            <div class="bg-gray-800 rounded-lg p-4 text-sm">
+                                <div class="text-green-400 mb-2">To: sarah.chen@email.com</div>
+                                <div class="text-gray-300">
+                                    "Hi Sarah! We noticed you haven't been to your favorite Wednesday yoga class in a while. 
+                                    Missing your zen time? I saved your spot for this week - just tap to confirm! 🧘‍♀️"
+                                </div>
+                                <div class="mt-3 text-xs text-gray-500">
+                                    Generated based on: Last class attended, preferred instructors, time slots
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <div class="inline-flex items-center bg-steel-blue text-white px-4 py-2 rounded-full mb-6">
+                            <span class="jetbrains-mono font-bold">02</span>
+                            <span class="ml-2">ENGAGE</span>
+                        </div>
+                        <h3 class="archivo-black text-3xl mb-6">
+                            <span class="text-steel-blue">Personalized</span> Re-engagement
+                        </h3>
+                        <p class="text-gray-300 mb-6">
+                            Each at-risk member gets a custom sequence based on their preferences, attendance history, and goals. 
+                            SMS, email, and app notifications delivered at optimal times.
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">Individual behavioral triggers</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">Multi-channel communication</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">68% response rate improvement</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="inline-flex items-center bg-success-green text-white px-4 py-2 rounded-full mb-6">
+                            <span class="jetbrains-mono font-bold">03</span>
+                            <span class="ml-2">MEASURE</span>
+                        </div>
+                        <h3 class="archivo-black text-3xl mb-6">
+                            Track <span class="text-success-green">Revenue Recovery</span>
+                        </h3>
+                        <p class="text-gray-300 mb-6">
+                            Real-time dashboard shows exactly how much revenue FitRetain saved, which campaigns work best, 
+                            and your ROI down to the dollar.
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">Revenue attribution tracking</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">Campaign performance analytics</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-success-green rounded-full mr-3"></div>
+                                <span class="text-sm">90-day ROI guarantee</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass rounded-2xl p-8">
+                        <h4 class="text-xl font-bold mb-4">ROI Tracking</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Revenue Saved</span>
+                                    <span class="jetbrains-mono">$23,470</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 78%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Members Retained</span>
+                                    <span class="jetbrains-mono">47/52</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Campaign Success Rate</span>
+                                    <span class="jetbrains-mono">83%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 83%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive ROI Calculator -->
+    <section class="py-20 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="archivo-black text-4xl md:text-5xl mb-6">
+                    Calculate Your <span class="text-energy-orange">Revenue Recovery</span>
+                </h2>
+                <p class="text-xl text-gray-300">
+                    See exactly how much FitRetain will save your gym in the first year.
+                </p>
+            </div>
+
+            <div class="glass rounded-3xl p-8">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6">Your Gym Details</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Active Members</label>
+                                <input type="range" id="members" min="50" max="2000" value="500" class="slider">
+                                <div class="flex justify-between text-sm text-gray-400 mt-1">
+                                    <span>50</span>
+                                    <span id="members-value" class="jetbrains-mono text-energy-orange font-bold">500</span>
+                                    <span>2,000</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Monthly Fee Per Member</label>
+                                <input type="range" id="fee" min="30" max="200" value="80" class="slider">
+                                <div class="flex justify-between text-sm text-gray-400 mt-1">
+                                    <span>$30</span>
+                                    <span id="fee-value" class="jetbrains-mono text-energy-orange font-bold">$80</span>
+                                    <span>$200</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Current Monthly Churn Rate</label>
+                                <input type="range" id="churn" min="3" max="15" value="8" class="slider">
+                                <div class="flex justify-between text-sm text-gray-400 mt-1">
+                                    <span>3%</span>
+                                    <span id="churn-value" class="jetbrains-mono text-energy-orange font-bold">8%</span>
+                                    <span>15%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6">Revenue Impact</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-gray-800 rounded-xl p-6">
+                                <div class="text-sm text-gray-400 mb-1">Monthly Revenue Lost to Churn</div>
+                                <div id="lost-revenue" class="jetbrains-mono text-2xl font-bold text-red-400">$3,200</div>
+                            </div>
+
+                            <div class="bg-gray-800 rounded-xl p-6">
+                                <div class="text-sm text-gray-400 mb-1">Monthly Savings with FitRetain</div>
+                                <div id="savings" class="jetbrains-mono text-2xl font-bold text-success-green">$2,560</div>
+                                <div class="text-sm text-gray-500 mt-1">80% churn reduction</div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-energy-orange to-steel-blue rounded-xl p-6">
+                                <div class="text-sm text-white mb-1">Annual ROI</div>
+                                <div id="roi" class="jetbrains-mono text-3xl font-bold text-white">$30,720</div>
+                                <div class="text-sm text-white text-opacity-80 mt-1">vs. $9,588 FitRetain cost</div>
+                            </div>
+                        </div>
+
+                        <button class="w-full mt-6 bg-energy-orange text-white py-4 rounded-xl font-bold text-lg hover:bg-opacity-90 transition-all">
+                            Start Your Free Trial
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="archivo-black text-4xl md:text-5xl mb-6">
+                    <span class="gradient-text">Transparent</span> Pricing
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Simple per-location pricing that scales with your success. No setup fees, no long-term contracts.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Starter -->
+                <div class="glass-dark rounded-3xl p-8 hover-lift">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-2">Starter</h3>
+                        <div class="text-gray-400 mb-6">Perfect for single-location gyms</div>
+                        
+                        <div class="mb-8">
+                            <span class="jetbrains-mono text-5xl font-bold text-energy-orange">$399</span>
+                            <span class="text-gray-400">/month</span>
+                        </div>
+
+                        <div class="space-y-4 mb-8 text-left">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Up to 500 active members</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Churn prediction & alerts</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Automated re-engagement</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Basic analytics dashboard</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Email support</span>
+                            </div>
+                        </div>
+
+                        <button class="w-full bg-steel-blue text-white py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">
+                            Start Free Trial
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Professional (Most Popular) -->
+                <div class="glass-dark rounded-3xl p-8 hover-lift relative border-2 border-energy-orange">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-energy-orange text-white px-4 py-1 rounded-full text-sm font-semibold">
+                        Most Popular
+                    </div>
+                    
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-2">Professional</h3>
+                        <div class="text-gray-400 mb-6">Best for growing gym chains</div>
+                        
+                        <div class="mb-8">
+                            <span class="jetbrains-mono text-5xl font-bold text-energy-orange">$799</span>
+                            <span class="text-gray-400">/month</span>
+                        </div>
+
+                        <div class="space-y-4 mb-8 text-left">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Up to 1,500 active members</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Everything in Starter, plus:</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Advanced segmentation</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>A/B test campaigns</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>ROI attribution tracking</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Phone & email support</span>
+                            </div>
+                        </div>
+
+                        <button class="w-full bg-energy-orange text-white py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">
+                            Start Free Trial
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="glass-dark rounded-3xl p-8 hover-lift">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+                        <div class="text-gray-400 mb-6">Custom solution for large chains</div>
+                        
+                        <div class="mb-8">
+                            <span class="jetbrains-mono text-5xl font-bold text-steel-blue">Custom</span>
+                        </div>
+
+                        <div class="space-y-4 mb-8 text-left">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Unlimited members</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Everything in Professional, plus:</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Custom AI model training</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>White-label branding</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Dedicated success manager</span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-success-green mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>24/7 priority support</span>
+                            </div>
+                        </div>
+
+                        <button class="w-full bg-steel-blue text-white py-3 rounded-xl font-semibold hover:bg-opacity-90 transition-all">
+                            Contact Sales
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <div class="inline-flex items-center bg-success-green bg-opacity-20 text-success-green px-4 py-2 rounded-full">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    90-Day Money-Back Guarantee — ROI or Full Refund
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 bg-gradient-to-b from-transparent to-gray-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="archivo-black text-4xl md:text-5xl mb-6">
+                    <span class="text-energy-orange">Real</span> Success Stories
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    See how FitRetain helped gym owners increase retention and recover revenue.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card glass-dark rounded-2xl p-8 hover-lift">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-energy-orange rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold">JR</span>
+                        </div>
+                        <div class="ml-4">
+                            <div class="font-bold text-white">Janet Rodriguez</div>
+                            <div class="text-gray-400 text-sm">Owner, FlexLife Fitness</div>
+                        </div>
+                    </div>
+                    
+                    <blockquote class="text-gray-300 mb-6">
+                        "FitRetain saved my business. We went from losing 40+ members every month to retaining 83% of at-risk members. 
+                        That's an extra $47K in revenue I wasn't losing anymore."
+                    </blockquote>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="jetbrains-mono text-2xl font-bold text-energy-orange">83%</div>
+                            <div class="text-xs text-gray-400">Retention Rate</div>
+                        </div>
+                        <div>
+                            <div class="jetbrains-mono text-2xl font-bold text-success-green">$47K</div>
+                            <div class="text-xs text-gray-400">Annual Savings</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card glass-dark rounded-2xl p-8 hover-lift">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-steel-blue rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold">MC</span>
+                        </div>
+                        <div class="ml-4">
+                            <div class="font-bold text-white">Mike Chen</div>
+                            <div class="text-gray-400 text-sm">GM, PowerZone Gyms (3 locations)</div>
+                        </div>
+                    </div>
+                    
+                    <blockquote class="text-gray-300 mb-6">
+                        "The prediction accuracy is scary good. We now catch members 2 weeks before they would have quit. 
+                        Our churn rate dropped from 8% to 2.8% per month across all three locations."
+                    </blockquote>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="jetbrains-mono text-2xl font-bold text-energy-orange">2.8%</div>
+                            <div class="text-xs text-gray-400">Churn Rate</div>
+                        </div>
+                        <div>
+                            <div class="jetbrains-mono text-2xl font-bold text-success-green">95%</div>
+                            <div class="text-xs text-gray-400">Prediction Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card glass-dark rounded-2xl p-8 hover-lift">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-success-green rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold">SK</span>
+                        </div>
+                        <div class="ml-4">
+                            <div class="font-bold text-white">Sarah Kim</div>
+                            <div class="text-gray-400 text-sm">Director, Elite Athletics</div>
+                        </div>
+                    </div>
+                    
+                    <blockquote class="text-gray-300 mb-6">
+                        "What I love is how personal it gets. Instead of generic 'we miss you' emails, 
+                        every message is about that specific member's favorite class or trainer. 68% response rate!"
+                    </blockquote>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="jetbrains-mono text-2xl font-bold text-energy-orange">68%</div>
+                            <div class="text-xs text-gray-400">Response Rate</div>
+                        </div>
+                        <div>
+                            <div class="jetbrains-mono text-2xl font-bold text-success-green">340%</div>
+                            <div class="text-xs text-gray-400">ROI First Year</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="archivo-black text-4xl md:text-5xl mb-6">
+                    Frequently Asked <span class="text-energy-orange">Questions</span>
+                </h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="faq-item glass-dark rounded-xl">
+                    <button class="w-full p-6 text-left flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-lg">How does FitRetain integrate with my existing gym management software?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content p-6 pt-0">
+                        <p class="text-gray-300">FitRetain connects via API to popular gym management systems like Mindbody, Zen Planner, ClubReady, and Wodify. Setup takes 15 minutes — we handle the technical integration while you focus on running your gym. No data migration required.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-dark rounded-xl">
+                    <button class="w-full p-6 text-left flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-lg">How accurate is the churn prediction really?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content p-6 pt-0">
+                        <p class="text-gray-300">95% accuracy across 180+ gym locations. Our AI analyzes 47 behavioral data points including check-in frequency, class attendance patterns, app usage, payment history, and session duration. We catch 89% of churn cases 14+ days before cancellation.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-dark rounded-xl">
+                    <button class="w-full p-6 text-left flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-lg">What if FitRetain doesn't improve my retention rate?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content p-6 pt-0">
+                        <p class="text-gray-300">90-day money-back guarantee. If FitRetain doesn't improve your retention rate by at least 30% within 90 days, we'll refund 100% of your subscription fees. No questions asked, no fine print.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-dark rounded-xl">
+                    <button class="w-full p-6 text-left flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-lg">Does my staff need training to use FitRetain?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content p-6 pt-0">
+                        <p class="text-gray-300">Zero training required. FitRetain runs automatically in the background. Your staff gets simple daily alerts about at-risk members, but the AI handles all prediction, outreach timing, and message personalization. One dashboard, 5 minutes per day.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-dark rounded-xl">
+                    <button class="w-full p-6 text-left flex justify-between items-center" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-lg">Can I customize the re-engagement messages?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <div class="faq-content p-6 pt-0">
+                        <p class="text-gray-300">Absolutely. You can customize message templates, tone, offers, and triggers. But the AI learns your members' preferences and automatically personalizes each message (favorite classes, preferred trainers, optimal contact times). Best of both worlds: your brand voice + AI intelligence.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-energy-orange to-steel-blue">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="archivo-black text-4xl md:text-6xl text-white mb-6">
+                Ready to Stop Losing Members?
+            </h2>
+            <p class="text-xl text-white text-opacity-90 mb-8 max-w-2xl mx-auto">
+                Join 180+ gym owners who increased retention by 83% and recovered $47K+ annually. 
+                Start your risk-free trial today.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                <button class="bg-white text-gray-900 px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transform hover:scale-105 transition-all">
+                    Start 30-Day Free Trial
+                </button>
+                <button class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:bg-opacity-20 transition-all">
+                    Schedule Demo
+                </button>
+            </div>
+
+            <div class="text-white text-opacity-80 text-sm">
+                ✓ No setup fees  ✓ No long-term contract  ✓ 90-day money-back guarantee
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-energy-orange rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">F</span>
+                        </div>
+                        <span class="archivo-black text-xl text-white">FitRetain</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        AI-powered member retention that turns January joiners into forever members.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Integrations</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">API</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Status</a></li>
+                        <li><a href="#" class="hover:text-energy-orange transition-colors">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400 text-sm">
+                    © 2026 FitRetain. All rights reserved. | Powered by <a href="https://winn.ai" class="text-energy-orange hover:underline">Winn AI Labs</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Three.js Background Animation
+        let scene, camera, renderer, particles;
+
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Create particle geometry
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 100;
+            const positions = new Float32Array(particleCount * 3);
+            const velocities = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i++) {
+                positions[i] = (Math.random() - 0.5) * 20;
+                velocities[i] = (Math.random() - 0.5) * 0.02;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
+
+            const material = new THREE.PointsMaterial({
+                color: 0xff6b35,
+                size: 0.05,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 5;
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (particles) {
+                particles.rotation.x += 0.001;
+                particles.rotation.y += 0.002;
+
+                const positions = particles.geometry.attributes.position.array;
+                const velocities = particles.geometry.attributes.velocity.array;
+
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i] += velocities[i];
+                    positions[i + 1] += velocities[i + 1];
+                    positions[i + 2] += velocities[i + 2];
+
+                    // Wrap around
+                    if (positions[i] > 10) positions[i] = -10;
+                    if (positions[i] < -10) positions[i] = 10;
+                    if (positions[i + 1] > 10) positions[i + 1] = -10;
+                    if (positions[i + 1] < -10) positions[i + 1] = 10;
+                }
+
+                particles.geometry.attributes.position.needsUpdate = true;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize Three.js when page loads
+        window.addEventListener('load', initThree);
+
+        // ROI Calculator
+        function updateCalculator() {
+            const members = parseInt(document.getElementById('members').value);
+            const fee = parseInt(document.getElementById('fee').value);
+            const churnRate = parseInt(document.getElementById('churn').value) / 100;
+
+            document.getElementById('members-value').textContent = members;
+            document.getElementById('fee-value').textContent = '$' + fee;
+            document.getElementById('churn-value').textContent = churnRate * 100 + '%';
+
+            const monthlyRevenueLost = members * churnRate * fee;
+            const monthlySavings = monthlyRevenueLost * 0.8; // 80% reduction
+            const annualROI = monthlySavings * 12;
+            const fitRetainCost = 799 * 12; // Professional plan
+
+            document.getElementById('lost-revenue').textContent = '$' + monthlyRevenueLost.toLocaleString();
+            document.getElementById('savings').textContent = '$' + monthlySavings.toLocaleString();
+            document.getElementById('roi').textContent = '$' + annualROI.toLocaleString();
+        }
+
+        // Add event listeners to sliders
+        document.getElementById('members').addEventListener('input', updateCalculator);
+        document.getElementById('fee').addEventListener('input', updateCalculator);
+        document.getElementById('churn').addEventListener('input', updateCalculator);
+
+        // Initialize calculator
+        updateCalculator();
+
+        // FAQ Toggle
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const arrow = button.querySelector('svg');
+
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                // Close other open FAQs
+                document.querySelectorAll('.faq-content.open').forEach(item => {
+                    item.classList.remove('open');
+                });
+                document.querySelectorAll('.faq-item svg').forEach(arrow => {
+                    arrow.style.transform = 'rotate(0deg)';
+                });
+
+                content.classList.add('open');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with fade-in class
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Progress bar animations
+        const animateProgressBars = () => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        };
+
+        // Trigger progress animations when they come into view
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateProgressBars();
+                    progressObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const progressSection = document.querySelector('.glass');
+            if (progressSection) {
+                progressObserver.observe(progressSection);
+            }
+        });
+    </script>
+</body>
+</html>
